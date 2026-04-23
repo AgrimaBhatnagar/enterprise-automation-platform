@@ -10,7 +10,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./gcp-deploy/infra
+        working-directory: ./infra   # ✅ FIXED PATH
 
     steps:
       - name: Checkout code
@@ -19,11 +19,14 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Debug structure
+        run: ls -R   # 🔥 shows folder structure (important)
+
       - name: Terraform Init
         run: terraform init
 
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Plan (no apply)
+      - name: Terraform Plan
         run: terraform plan || true
