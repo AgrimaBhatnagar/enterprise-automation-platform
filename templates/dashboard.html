@@ -1,0 +1,58 @@
+<h2>Request VM</h2>
+<input id="email" placeholder="Enter email">
+<button onclick="requestVM()">Request VM</button>
+
+<h2>Requests</h2>
+<button onclick="loadRequests()">Load Requests</button>
+
+<ul id="requests"></ul>
+<h2>Logs</h2>
+<button onclick="loadLogs()">Load Logs</button>
+
+<ul id="logs"></ul>
+
+<script>
+function requestVM() {
+    fetch('/request-vm', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: document.getElementById("email").value})
+    })
+}
+function loadLogs() {
+    fetch('/logs')
+    .then(res => res.json())
+    .then(data => {
+        let list = document.getElementById("logs");
+        list.innerHTML = "";
+
+        data.logs.forEach(l => {
+            let item = document.createElement("li");
+            item.innerText = `${l.user} - ${l.action} - ${l.status}`;
+            list.appendChild(item);
+        });
+    });
+}
+
+function loadRequests() {
+    fetch('/dashboard')
+    .then(res => res.json())
+    .then(data => {
+        let list = document.getElementById("requests");
+        list.innerHTML = "";
+
+        data.requests.forEach(r => {
+            let item = document.createElement("li");
+            item.innerHTML = `
+                ${r.user} - ${r.status}
+                <button onclick="approve(${r.id})">Approve</button>
+            `;
+            list.appendChild(item);
+        });
+    });
+}
+
+function approve(id) {
+    fetch(`/approve-vm/${id}`, {method: "POST"})
+}
+</script>
